@@ -18,17 +18,16 @@ object Runner extends IOApp {
 
   override def run(args: List[String]): IO[ExitCode] = {
     query()
-      .flatMap(people =>
-        people.map(person => Logger[IO].info(person.toString)) |>
-          ioMonoid[Unit]().combineAll
+      .map(people =>
+        people.map(person => person.toString) |> stringMonoid.combineAll
       )
+      .flatMap(peopleString => Logger[IO].info(peopleString))
       .as(ExitCode.Success)
   }
 
-  private def ioMonoid[A](): Monoid[IO[A]] = new Monoid[IO[A]] {
-    override def empty: IO[A] = IO.unit
-    override def combine(io1: IO[A], io2: IO[A]): IO[A] =
-      io1.flatMap(_ => io2)
+  private val stringMonoid: Monoid[String] = new Monoid[String] {
+    override def empty: String = ""
+    override def combine(x: String, y: String): String = if (x.isEmpty) y else s"$x\n$y"
   }
 
   private val personMapper: JdbcMapper[Person] = { rs =>
