@@ -14,7 +14,7 @@ import mouse.all._
 object PeopleQueryService {
   private implicit def unsafeLogger[F[_]: Sync] = Slf4jLogger.getLogger[F]
 
-  def queryForPeople() = {
+  def queryForPeople(): IO[Unit] = {
     query()
       .map(people =>
         people.map(person => person.toString) |>
