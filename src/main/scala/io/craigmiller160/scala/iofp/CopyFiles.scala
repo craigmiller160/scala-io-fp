@@ -1,12 +1,16 @@
 package io.craigmiller160.scala.iofp
 
-import cats.effect.{IO, Resource}
+import cats.effect.{ExitCode, IO, IOApp, Resource}
 
 import java.io.{File, FileInputStream, FileOutputStream, InputStream, OutputStream}
 
-object CopyFiles {
+object CopyFiles extends IOApp {
+  override def run(args: List[String]): IO[ExitCode] =
+    copy(new File("./build.sbt"), new File("./build2.sbt"))
+      .as(ExitCode.Success)
+
   def copy(origin: File, destination: File): IO[Long] =
-    inputOutputStream(new File("./build.sbt"), new File("./build2.sbt")).use {
+    inputOutputStream(origin, destination).use {
       case (in, out) => transfer(in, out)
     }
 
