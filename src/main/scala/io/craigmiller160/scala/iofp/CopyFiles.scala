@@ -13,7 +13,7 @@ object CopyFiles extends IOApp {
           ex.printStackTrace()
           -1
       }
-      .flatMap(count => IO.println(s"Count: $count"))
+      .flatMap(count => IO.println(s"Transfer Count: $count"))
       .as(ExitCode.Success)
 
   def copy[F[_]: Sync](origin: File, destination: File): F[Long] =
