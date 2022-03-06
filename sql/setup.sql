@@ -28,10 +28,3 @@ VALUES (gen_random_uuid(), 'Bob', 'Saget'), (gen_random_uuid(), 'Jane', 'Foster'
 
 INSERT INTO transaction_type (id, type_name)
 VALUES (gen_random_uuid(), 'Withdrawal'), (gen_random_uuid(), 'Deposit');
-
-WITH bob_id AS (SELECT id FROM people WHERE first_name = 'Bob' AND last_name = 'Saget'),
-     jane_id AS (SELECT id FROM people WHERE first_name = 'Jane' AND last_name = 'Foster'),
-     withdrawal_id AS (SELECT id FROM transaction_type WHERE type_name = 'Withdrawal'),
-     deposit_id AS (SELECT id FROM transaction_type WHERE type_name = 'Deposit')
-INSERT INTO transactions (id, type_id, person_id, amount)
-VALUES (gen_random_uuid(), deposit_id, bob_id, 1000);
