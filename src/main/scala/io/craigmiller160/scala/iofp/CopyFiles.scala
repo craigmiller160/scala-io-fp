@@ -7,15 +7,15 @@ import java.io.{File, FileInputStream, FileOutputStream, InputStream, OutputStre
 
 object CopyFiles extends IOApp {
   override def run(args: List[String]): IO[ExitCode] =
-    copy(new File("./build.sbt"), new File("./build2.sbt"))
+    copy[IO](new File("./build.sbt"), new File("./build2.sbt"))
       .as(ExitCode.Success)
 
-  def copy(origin: File, destination: File): IO[Long] =
+  def copy[F[_]: Sync](origin: File, destination: File): F[Long] =
     inputOutputStream(origin, destination).use {
       case (in, out) => transfer(in, out)
     }
 
-  def transfer(inStream: FileInputStream, outStream: FileOutputStream): IO[Long] =
+  def transfer[F[_]: Sync](inStream: FileInputStream, outStream: FileOutputStream): F[Long] =
     transmit(inStream, outStream, new Array[Byte](1024 * 10), 0L)
 
   def transmit[F[_]: Sync](origin: InputStream, destination: OutputStream, buffer: Array[Byte], acc: Long): F[Long] =
@@ -29,21 +29,21 @@ object CopyFiles extends IOApp {
       }
     } yield count
 
-  def inputStream(file: File): Resource[IO, FileInputStream] =
+  def inputStream[F[_]: Sync](file: File): Resource[F, FileInputStream] =
     Resource.make {
-      IO.blocking(new FileInputStream(file))
+      Sync[F].blocking(new FileInputStream(file))
     } { stream =>
-      IO.blocking(stream.close()).handleErrorWith(_ => IO.unit) // TODO any way to improve error handling?
+      Sync[F].blocking(stream.close()).handleErrorWith(_ => Sync[F].unit) // TODO any way to improve error handling?
     }
 
-  def outputStream(file: File): Resource[IO, FileOutputStream] =
+  def outputStream[F[_]: Sync](file: File): Resource[F, FileOutputStream] =
     Resource.make {
-      IO.blocking(new FileOutputStream(file))
+      Sync[F].blocking(new FileOutputStream(file))
     } { stream =>
-      IO.blocking(stream.close()).handleErrorWith(_ => IO.unit) // TODO any way to improve error handling?
+      Sync[F].blocking(stream.close()).handleErrorWith(_ => Sync[F].unit) // TODO any way to improve error handling?
     }
 
-  def inputOutputStream(inFile: File, outFile: File): Resource[IO, (FileInputStream, FileOutputStream)] =
+  def inputOutputStream[F[_]: Sync](inFile: File, outFile: File): Resource[F, (FileInputStream, FileOutputStream)] =
     for {
       inStream <- inputStream(inFile)
       outStream <- outputStream(outFile)
