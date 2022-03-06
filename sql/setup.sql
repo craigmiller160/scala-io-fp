@@ -43,3 +43,6 @@ CREATE PROCEDURE transaction_load () LANGUAGE plpgsql
         SELECT id INTO withdrawal_id FROM transaction_type WHERE type_name = 'Withdrawal';
         SELECT id INTO deposit_id FROM transaction_type WHERE type_name = 'Deposit';
     END $$;
+
+CALL transaction_load();
+DROP PROCEDURE transaction_load;
