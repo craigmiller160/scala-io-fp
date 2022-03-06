@@ -1,5 +1,6 @@
 package io.craigmiller160.scala.iofp.db
 
+import cats.effect.{Resource, Sync}
 import com.zaxxer.hikari.{HikariConfig, HikariDataSource}
 
 import javax.sql.DataSource
@@ -19,4 +20,8 @@ object Database {
 
     new HikariDataSource(config)
   }
+
+  val db = getDataSource
+
+  def makeDbResource[F[_]: Sync] = Resource.make(acquire = Sync[F].delay(db.getConnection))(release = conn => Sync[F].delay(conn.close()))
 }
