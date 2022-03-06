@@ -17,3 +17,5 @@ lazy val root = (project in file("."))
   .settings(
     name := "scala-io-fp"
   )
+
+Compile / run / mainClass := Some("io.craigmiller160.scala.iofp.Runner")
