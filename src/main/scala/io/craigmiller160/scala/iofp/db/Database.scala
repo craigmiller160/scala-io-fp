@@ -3,6 +3,7 @@ package io.craigmiller160.scala.iofp.db
 import cats.effect.{Resource, Sync}
 import com.zaxxer.hikari.{HikariConfig, HikariDataSource}
 
+import java.sql.Connection
 import javax.sql.DataSource
 
 object Database {
@@ -21,7 +22,8 @@ object Database {
     new HikariDataSource(config)
   }
 
-  val db = getDataSource
-
-  def makeDbResource[F[_]: Sync] = Resource.make(acquire = Sync[F].delay(db.getConnection))(release = conn => Sync[F].delay(conn.close()))
+  def makeDbResource[F[_]: Sync]: Resource[F,Connection] = {
+    val ds = getDataSource
+    return Resource.make(acquire = Sync[F].delay(ds.getConnection))(release = conn => Sync[F].delay(conn.close()))
+  }
 }
