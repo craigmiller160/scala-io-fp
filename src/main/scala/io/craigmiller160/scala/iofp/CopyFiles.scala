@@ -21,5 +21,9 @@ object CopyFiles {
       IO.blocking(stream.close()).handleErrorWith(_ => IO.unit) // TODO any way to improve error handling?
     }
 
-
+  def inputOutputStream(inFile: File, outFile: File): Resource[IO, (FileInputStream, FileOutputStream)] =
+    for {
+      inStream <- inputStream(inFile)
+      outStream <- outputStream(outFile)
+    } yield (inStream, outStream)
 }
