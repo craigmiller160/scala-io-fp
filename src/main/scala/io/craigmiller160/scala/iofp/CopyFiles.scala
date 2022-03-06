@@ -1,6 +1,7 @@
 package io.craigmiller160.scala.iofp
 
-import cats.effect.{ExitCode, IO, IOApp, Resource, Sync}
+import cats.effect._
+import cats._
 import cats.implicits._
 
 import java.io.{File, FileInputStream, FileOutputStream, InputStream, OutputStream}
@@ -8,10 +9,10 @@ import java.io.{File, FileInputStream, FileOutputStream, InputStream, OutputStre
 object CopyFiles extends IOApp {
   override def run(args: List[String]): IO[ExitCode] =
     copy[IO](new File("./build222.sbt"), new File("./build2.sbt"))
-      .recover {
+      .recoverWith {
         case ex: Throwable =>
-          ex.printStackTrace()
-          -1
+          IO.consoleForIO.printStackTrace(ex)
+          .map(_ => -1)
       }
       .flatMap(count => IO.println(s"Transfer Count: $count"))
       .as(ExitCode.Success)
