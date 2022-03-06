@@ -24,6 +24,6 @@ object Database {
 
   def makeDbResource[F[_]: Sync]: Resource[F,Connection] = {
     val ds = getDataSource
-    return Resource.make(acquire = Sync[F].delay(ds.getConnection))(release = conn => Sync[F].delay(conn.close()))
+    Resource.make(acquire = Sync[F].blocking(ds.getConnection))(release = conn => Sync[F].blocking(conn.close()))
   }
 }
