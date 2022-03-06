@@ -12,11 +12,10 @@ object CopyFiles extends IOApp {
 
   override def run(args: List[String]): IO[ExitCode] =
     copy[IO](new File("./build222.sbt"), new File("./build2.sbt"))
-      .recoverWith {
-        case ex: Throwable =>
-          Logger[IO].error(ex)("Error copying file")
+      .recoverWith(ex =>
+        Logger[IO].error(ex)("Error copying file")
           .map(_ => -1)
-      }
+      )
       .flatMap(count => IO.println(s"Transfer Count: $count"))
       .as(ExitCode.Success)
 
@@ -43,14 +42,20 @@ object CopyFiles extends IOApp {
     Resource.make {
       Sync[F].blocking(new FileInputStream(file))
     } { stream =>
-      Sync[F].blocking(stream.close()).handleErrorWith(_ => Sync[F].unit) // TODO any way to improve error handling?
+      Sync[F].blocking(stream.close()).handleErrorWith(ex =>
+        Logger[F].error(ex)("Error closing output stream")
+          .flatMap(_ => Sync[F].unit)
+      )
     }
 
   def outputStream[F[_]: Sync](file: File): Resource[F, FileOutputStream] =
     Resource.make {
       Sync[F].blocking(new FileOutputStream(file))
     } { stream =>
-      Sync[F].blocking(stream.close()).handleErrorWith(_ => Sync[F].unit) // TODO any way to improve error handling?
+      Sync[F].blocking(stream.close()).handleErrorWith(ex =>
+        Logger[F].error(ex)("Error closing output stream")
+          .flatMap(_ => Sync[F].unit)
+      )
     }
 
   def inputOutputStream[F[_]: Sync](inFile: File, outFile: File): Resource[F, (FileInputStream, FileOutputStream)] =
