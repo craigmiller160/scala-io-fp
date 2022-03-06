@@ -5,7 +5,7 @@ val scalaTestVersion = "3.2.11"
 val catsVersion = "2.7.0"
 val mouseVersion = "1.0.10"
 val catsEffectVersion = "3.3.6"
-val hikariVersion = "5.0.1"
+val hikariVersion = "4.0.3"
 val pgVersion = "42.3.3"
 val slf4jVersion = "1.7.36"
 val log4jVersion = "2.17.2"
@@ -15,7 +15,7 @@ libraryDependencies ++= Seq(
   "org.typelevel" %% "cats-core" % catsVersion,
   "org.typelevel" %% "mouse" % mouseVersion,
   "org.typelevel" %% "cats-effect" % catsEffectVersion,
-  "com.zaxxer" % "HikariCP" % hikariVersion,
+  "com.zaxxer" % "HikariCP" % hikariVersion exclude("org.slf4j", "slf4j-api"),
   "org.postgresql" % "postgresql" % pgVersion,
   "org.slf4j" % "slf4j-api" % slf4jVersion,
   "org.apache.logging.log4j" % "log4j-core" % log4jVersion,
