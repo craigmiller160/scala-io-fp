@@ -7,7 +7,13 @@ import java.io.{File, FileInputStream, FileOutputStream, InputStream, OutputStre
 
 object CopyFiles extends IOApp {
   override def run(args: List[String]): IO[ExitCode] =
-    copy[IO](new File("./build.sbt"), new File("./build2.sbt"))
+    copy[IO](new File("./build222.sbt"), new File("./build2.sbt"))
+      .recover {
+        case ex: Throwable =>
+          ex.printStackTrace()
+          -1
+      }
+      .flatMap(count => IO.println(s"Count: $count"))
       .as(ExitCode.Success)
 
   def copy[F[_]: Sync](origin: File, destination: File): F[Long] =
