@@ -1,6 +1,7 @@
 package io.craigmiller160.scala.iofp
 
-import cats.effect.{ExitCode, IO, IOApp, Resource}
+import cats.effect.{ExitCode, IO, IOApp, Resource, Sync}
+import cats.implicits._
 
 import java.io.{File, FileInputStream, FileOutputStream, InputStream, OutputStream}
 
@@ -17,14 +18,14 @@ object CopyFiles extends IOApp {
   def transfer(inStream: FileInputStream, outStream: FileOutputStream): IO[Long] =
     transmit(inStream, outStream, new Array[Byte](1024 * 10), 0L)
 
-  def transmit(origin: InputStream, destination: OutputStream, buffer: Array[Byte], acc: Long): IO[Long] =
+  def transmit[F[_]: Sync](origin: InputStream, destination: OutputStream, buffer: Array[Byte], acc: Long): F[Long] =
     for {
-      amount <- IO.blocking(origin.read(buffer, 0, buffer.length))
+      amount <- Sync[F].blocking(origin.read(buffer, 0, buffer.length))
       count <- if (amount > -1) {
-        IO.blocking(destination.write(buffer, 0, amount))
+        Sync[F].blocking(destination.write(buffer, 0, amount))
           .flatMap(_ => transmit(origin, destination, buffer, acc + amount))
       } else {
-        IO.pure(acc)
+        Sync[F].pure(acc)
       }
     } yield count
 
