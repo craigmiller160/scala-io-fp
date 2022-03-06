@@ -42,6 +42,11 @@ CREATE PROCEDURE transaction_load () LANGUAGE plpgsql
         SELECT id INTO jane_id FROM people WHERE first_name = 'Jane' AND last_name = 'Foster';
         SELECT id INTO withdrawal_id FROM transaction_type WHERE type_name = 'Withdrawal';
         SELECT id INTO deposit_id FROM transaction_type WHERE type_name = 'Deposit';
+
+        INSERT INTO transactions (id, type_id, person_id, amount)
+        VALUES (gen_random_uuid(), deposit_id, bob_id, 1000),
+               (gen_random_uuid(), deposit_id, jane_id, 500),
+               (gen_random_uuid(), withdrawal_id, bob_id, 200);
     END $$;
 
 CALL transaction_load();
