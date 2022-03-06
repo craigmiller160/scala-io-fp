@@ -9,6 +9,7 @@ val hikariVersion = "4.0.3"
 val pgVersion = "42.3.3"
 val slf4jVersion = "1.7.36"
 val log4jVersion = "2.17.2"
+val log4CatsVersion = "2.2.0"
 
 libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % scalaTestVersion,
@@ -19,7 +20,9 @@ libraryDependencies ++= Seq(
   "org.postgresql" % "postgresql" % pgVersion,
   "org.slf4j" % "slf4j-api" % slf4jVersion,
   "org.apache.logging.log4j" % "log4j-core" % log4jVersion,
-  "org.apache.logging.log4j" % "log4j-slf4j-impl" % log4jVersion
+  "org.apache.logging.log4j" % "log4j-slf4j-impl" % log4jVersion,
+  "org.typelevel" %% "log4cats-core" % log4CatsVersion,
+  "org.typelevel" %% "log4cats-slf4j" % log4CatsVersion
 )
 
 lazy val root = (project in file("."))

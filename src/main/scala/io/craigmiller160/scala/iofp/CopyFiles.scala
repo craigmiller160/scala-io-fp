@@ -2,16 +2,19 @@ package io.craigmiller160.scala.iofp
 
 import cats.effect._
 import cats._
+import org.typelevel.log4cats.Logger
+import org.typelevel.log4cats.slf4j.Slf4jLogger
 import cats.implicits._
-
 import java.io.{File, FileInputStream, FileOutputStream, InputStream, OutputStream}
 
 object CopyFiles extends IOApp {
+  private implicit def unsafeLogger[F[_]: Sync] = Slf4jLogger.getLogger[F]
+
   override def run(args: List[String]): IO[ExitCode] =
     copy[IO](new File("./build222.sbt"), new File("./build2.sbt"))
       .recoverWith {
         case ex: Throwable =>
-          IO.consoleForIO.printStackTrace(ex)
+          Logger[IO].error(ex)("Error copying file")
           .map(_ => -1)
       }
       .flatMap(count => IO.println(s"Transfer Count: $count"))
