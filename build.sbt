@@ -6,13 +6,15 @@ val catsVersion = "2.7.0"
 val mouseVersion = "1.0.10"
 val catsEffectVersion = "3.3.6"
 val hikariVersion = "5.0.1"
+val pgVersion = "42.3.3"
 
 libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % scalaTestVersion,
   "org.typelevel" %% "cats-core" % catsVersion,
   "org.typelevel" %% "mouse" % mouseVersion,
   "org.typelevel" %% "cats-effect" % catsEffectVersion,
-  "com.zaxxer" % "HikariCP" % hikariVersion
+  "com.zaxxer" % "HikariCP" % hikariVersion,
+  "org.postgresql" % "postgresql" % pgVersion
 )
 
 lazy val root = (project in file("."))
